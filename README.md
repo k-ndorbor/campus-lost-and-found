@@ -130,3 +130,11 @@ faced by students and staD. By combining user-friendly interfaces, secure
 communication, and stakeholder integration, the project has high potential for impact.
 With scalability options and monetization paths such as ads and institutional licensing,
 this system is both socially meaningful and commercially viable.
+Team Members
+Keith Ndobor - Team leader/project manager. github handle: @k-ndobor
+Ogunbanwo Boluwatife - backend developer. github handle: @bolluxofficial
+
+Project Timeline
+The project can be executed between 10-14 weeks.
+
+Project Board
