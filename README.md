@@ -139,3 +139,4 @@ Project Timeline
 The project can be executed between 10-14 weeks.
 
 Project Board 
+https://github.com/users/k-ndorbor/projects/2
