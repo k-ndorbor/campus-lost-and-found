@@ -138,4 +138,3 @@ Ogunbanwo Boluwatife - backend developer. github handle: @bolluxofficial
 Project Timeline
 The project can be executed between 10-14 weeks.
 
-Project Board
