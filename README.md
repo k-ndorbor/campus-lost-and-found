@@ -1,5 +1,5 @@
 # Campus Lost & Found System
-https://github.com/users/k-ndorbor/projects/2
+
 ## Project Description
 The Campus Lost & Found System is a digital platform aimed at solving the persistent issue of misplaced personal belongings within university campuses. It allows students, staff, and other campus stakeholders to report, search for, and recover lost items efficiently through a mobile or web application. The platform fosters trust, reduces stress, and enhances security across campus. 
 
