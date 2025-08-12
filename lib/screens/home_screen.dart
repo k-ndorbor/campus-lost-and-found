@@ -114,7 +114,7 @@ class HomeScreen extends StatelessWidget {
  child: ClipRRect( // Use ClipRRect to round the image corners
                           borderRadius: BorderRadius.circular(12.0),
                           child: Image.asset(
-                            'assets/Group 2.png', // Placeholder image
+                            'assets/Group 2.png', // Placeholder image - Replace with dynamic image data
                             fit: BoxFit.cover,
                             width: double.infinity, // Ensure image fills the width
                             height: 200,
