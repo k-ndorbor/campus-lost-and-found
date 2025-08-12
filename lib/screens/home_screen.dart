@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'login_screen.dart';
 
 class HomeScreen extends StatelessWidget {
-  // ignore: use_key_in_widget_constructors
   const HomeScreen({super.key});
 
   Future<void> _signOut() async {
@@ -16,7 +15,6 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: Builder(
-          alignment: Alignment.centerLeft,
           builder: (BuildContext context) {
             return IconButton(icon: const Icon(Icons.menu), onPressed: () {});
           },
@@ -27,18 +25,15 @@ class HomeScreen extends StatelessWidget {
             onPressed: () async {
               await _signOut();
               if (context.mounted) {
-                // Navigate to login screen and remove all other routes
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                  (route) => false,
-                );
+                // Use go_router for navigation
+                context.go('/login');
               }
             },
             tooltip: 'Logout',
           ),
         ],
       ),
-      backgroundColor: const Color(0xFF3b436b), // Dark blue background color
+      backgroundColor: const Color(0xFF3b436b),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -46,7 +41,7 @@ class HomeScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Row(
-
+                children: [
                   Expanded(
                     child: ElevatedButton.icon(
                       onPressed: () => context.go('/add-item'),
@@ -54,7 +49,10 @@ class HomeScreen extends StatelessWidget {
                       label: const Text('Post found item'),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
-                          side: const BorderSide(color: Colors.black),
+                        side: const BorderSide(color: Colors.black),
+                        backgroundColor: Colors.blueGrey[800],
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                       ),
@@ -68,7 +66,10 @@ class HomeScreen extends StatelessWidget {
                       label: const Text('Report lost item'),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
-                          side: const BorderSide(color: Colors.black),
+                        side: const BorderSide(color: Colors.black),
+                        backgroundColor: Colors.blueGrey[800],
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                       ),
@@ -78,7 +79,7 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Card(
-                color: Colors.blueGrey[800], // Slightly lighter dark blue for the card
+                color: Colors.blueGrey[800],
                 elevation: 4.0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12.0),
@@ -86,78 +87,61 @@ class HomeScreen extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
-                          const CircleAvatar(
-                            backgroundImage:
-                                AssetImage('assets/Group 2.png'), // Placeholder
+                          CircleAvatar(
+                            backgroundColor: Colors.blueGrey[700],
+                            child: const Icon(Icons.person, color: Colors.white),
                             radius: 20,
                           ),
                           const SizedBox(width: 8),
                           const Text(
-                            'Elizabeth Lawson', // Placeholder
+                            'Elizabeth Lawson',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: Colors.white, // White text
+                              color: Colors.white,
                             ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 16),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12.0),
-                        child: Image.asset(
-                          'assets/Group 3.png', // Placeholder
-                          width: double.infinity,
-                          height: 200,
-                          fit: BoxFit.cover,
+                      Container(
+                        height: 200,
+                        decoration: BoxDecoration(
+                          color: Colors.blueGrey[700],
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        child: const Center(
+                          child: Icon(
+                            Icons.image,
+                            size: 50,
+                            color: Colors.white54,
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 16), // Corrected height
-                      const Text(
-                        'Item name: Car keys', // Placeholder
-                        style: TextStyle(fontSize: 16, color: Colors.white), // White text
-                      ),
-                      const SizedBox(height: 4), // Corrected height
-                      const Text(
-                        'Description: Black with a leather key holder', // Placeholder
-                        style: TextStyle(fontSize: 16, color: Colors.white), // White text
-                      ),
-                      const SizedBox(height: 4), // Corrected height
-                      const Text(
-                        'Location lost: CSOB building', // Placeholder
-                        style: TextStyle(fontSize: 16, color: Colors.white), // White text
-                      ),
-                      const SizedBox(height: 4), // Corrected height
-                      const Text(
-                        'Date lost: 06/08/25', // Placeholder
-                        style: TextStyle(fontSize: 16, color: Colors.white), // White text
-                      ),
-                      const SizedBox(height: 4), // Corrected height
-                      const Text(
-                        'Colour: Black and silver', // Placeholder
-                        style: TextStyle(fontSize: 16, color: Colors.white), // White text
-                      ),
+                      const SizedBox(height: 16),
+                      _buildInfoText('Item name: Car keys'),
+                      _buildInfoText('Description: Black with a leather key holder'),
+                      _buildInfoText('Location lost: CSOB building'),
+                      _buildInfoText('Date lost: 06/08/25'),
+                      _buildInfoText('Colour: Black and silver'),
                     ],
-                    crossAxisAlignment: CrossAxisAlignment.start,
                   ),
                 ),
               ),
               const SizedBox(height: 20),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                // Increased spacing between buttons
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () => context.go('/found-items'),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
-                        backgroundColor: Colors.amber, // Placeholder color
-                        // primary: Colors.amber, // Button color - deprecated
+                        backgroundColor: Colors.amber,
+                        foregroundColor: Colors.black,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
@@ -171,16 +155,31 @@ class HomeScreen extends StatelessWidget {
                       onPressed: () => context.go('/messages'),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
-                        backgroundColor: Colors.amber, // Placeholder color
-                        // primary: Colors.amber, // Button color - deprecated
+                        backgroundColor: Colors.amber,
+                        foregroundColor: Colors.black,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                       ),
                       child: const Text('Messages'),
-            ),
-          ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildInfoText(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2.0),
+      child: Text(
+        text,
+        style: const TextStyle(fontSize: 16, color: Colors.white),
       ),
     );
   }
