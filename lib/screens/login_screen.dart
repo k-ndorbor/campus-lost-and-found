@@ -143,16 +143,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 20.0),
-              TextButton(
-                onPressed: () {
-                  context.go('/signup');
-                },
-                child: const Text('Don\'t have an account? Sign up'),
-              ),
-            ],
+                TextButton(
+                  onPressed: () {
+                    context.go('/signup');
+                  },
+                  child: const Text('Don\'t have an account? Sign up', style: TextStyle(color: Colors.white)),
+                ),
+              ],
             ),
           ),
-        ),
+        ],
       ),
     );
   }
