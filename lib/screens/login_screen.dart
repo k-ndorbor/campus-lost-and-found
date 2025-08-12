@@ -1,6 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:go_router/go_router.dart';
+import 'package:logging/logging.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
+
+final _logger = Logger('LoginScreen');
+
+// Helper function to log messages
+void _logInfo(String message) {
+  if (kDebugMode) {
+    print('LOGIN_SCREEN: $message');
+  }
+  _logger.info(message);
+}
+
+void _logError(String message, [dynamic error, StackTrace? stackTrace]) {
+  if (kDebugMode) {
+    print('LOGIN_SCREEN ERROR: $message');
+    if (error != null) {
+      print('Error: $error');
+    }
+    if (stackTrace != null) {
+      print('Stack trace: $stackTrace');
+    }
+  }
+  _logger.severe(message, error, stackTrace);
+}
+
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -20,32 +46,31 @@ class _LoginScreenState extends State<LoginScreen> {
       resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xFF0A185A), // Dark blue background
       body: Stack(
- children: [
- // Image at bottom left
- Positioned(
+        children: [
+          // Bottom left wave image
+          Positioned(
             bottom: 0,
             left: 0,
             child: Image.asset(
-              'assets/images/bottom_left_wave.png', // Replace with your image path
+              'assets/Group 2.png',
+              width: 200,
+              height: 200,
               fit: BoxFit.cover,
-            ),
- right: 0,
- child: Container(
-                width: 200,
-                height: 200,
-                color: const Color(0xFFFFD700), // Yellow color
-              ),
             ),
           ),
-          Padding(
- Positioned(
- top: 0,
- right: 0,
- child: Image.asset(
-              'assets/images/top_right_wave.png', // Replace with your image path
+          // Top right wave image
+          Positioned(
+            top: 0,
+            right: 0,
+            child: Image.asset(
+              'assets/Group 3.png',
+              width: 200,
+              height: 200,
               fit: BoxFit.cover,
- ),
- ),
+            ),
+          ),
+          // Main content
+          Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,11 +116,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     labelText: 'Email',
                     labelStyle: const TextStyle(color: Colors.white),
                     enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Color(0xFFFFD700), width: 2.0), // Yellow border
+                      borderSide: const BorderSide(
+                          color: Color(0xFFFFD700),
+                          width: 2.0), // Yellow border
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Color(0xFFFFD700), width: 2.0), // Yellow border
+                      borderSide: const BorderSide(
+                          color: Color(0xFFFFD700),
+                          width: 2.0), // Yellow border
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                   ),
@@ -109,11 +138,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     labelText: 'Password',
                     labelStyle: const TextStyle(color: Colors.white),
                     enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Color(0xFFFFD700), width: 2.0), // Yellow border
+                      borderSide: const BorderSide(
+                          color: Color(0xFFFFD700),
+                          width: 2.0), // Yellow border
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Color(0xFFFFD700), width: 2.0), // Yellow border
+                      borderSide: const BorderSide(
+                          color: Color(0xFFFFD700),
+                          width: 2.0), // Yellow border
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                   ),
@@ -122,30 +155,20 @@ class _LoginScreenState extends State<LoginScreen> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: InkWell(
-                    onTap: () async {
-                      try {
-                        await _auth.signInWithEmailAndPassword(
-                          email: _emailController.text,
-                          password: _passwordController.text,
-                        );
-                        // Navigate to home after successful login
-                        context.go('/');
-                      } on FirebaseAuthException catch (e) {
-                        // Show error message to the user
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(e.message ?? 'An error occurred')),
-                        );
-                      }
-                    },
-                    child: const Icon(Icons.arrow_forward, color: Color(0xFFFFD700), size: 40.0), // Yellow arrow icon
+                    onTap: _login,
+                    child: const Icon(Icons.arrow_forward,
+                        color: Color(0xFFFFD700),
+                        size: 40.0), // Yellow arrow icon
                   ),
                 ),
                 const SizedBox(height: 20.0),
                 TextButton(
                   onPressed: () {
-                    context.go('/signup');
+                    // Navigate to signup screen using GoRouter
+                    GoRouter.of(context).go('/signup');
                   },
-                  child: const Text('Don\'t have an account? Sign up', style: TextStyle(color: Colors.white)),
+                  child: const Text('Don\'t have an account? Sign up',
+                      style: TextStyle(color: Colors.white)),
                 ),
               ],
             ),
@@ -153,6 +176,96 @@ class _LoginScreenState extends State<LoginScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _login() async {
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please enter both email and password')),
+        );
+      }
+      return;
+    }
+
+    _logInfo('Attempting login with email: ${_emailController.text.trim()}');
+
+    try {
+      final userCredential = await _auth.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      _logInfo('Login successful for user: ${userCredential.user?.uid}');
+
+      if (!mounted) {
+        _logError('Widget not mounted, not navigating');
+        return;
+      }
+
+      _logInfo('Navigating to home screen');
+      context.go('/');
+      _logInfo('Navigation to home complete');
+
+    } on FirebaseAuthException catch (e) {
+      String message = 'An error occurred during login';
+
+      switch (e.code) {
+        case 'user-not-found':
+        case 'wrong-password':
+          message = 'Invalid email or password';
+          break;
+        case 'user-disabled':
+          message = 'This account has been disabled';
+          break;
+        case 'too-many-requests':
+          message = 'Too many login attempts. Please try again later.';
+          break;
+        default:
+          message = 'Login failed: ${e.message}';
+      }
+
+      _logError('Login failed', e);
+
+      if (mounted) {
+        _showErrorDialog(message);
+      }
+    } catch (e, stackTrace) {
+      _logError('Unexpected error during login', e, stackTrace);
+
+      if (mounted) {
+        _showErrorDialog('An unexpected error occurred. Please try again.');
+      }
+    }
+  }
+
+  // Helper method to show error dialog
+  void _showErrorDialog(String message) {
+    if (!mounted) {
+      _logError('Cannot show error dialog - widget not mounted');
+      return;
+    }
+    
+    _logInfo('Showing error dialog: $message');
+    
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Error'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   @override

@@ -62,10 +62,18 @@ final GoRouter _router = GoRouter(
   ],
   redirect: (BuildContext context, GoRouterState state) {
     final bool loggedIn = FirebaseAuth.instance.currentUser != null;
-    final bool loggingIn = state.matchedLocation == '/login';
-    if (!loggedIn && !loggingIn) return '/login';
-    if (loggedIn && loggingIn) return '/';
-    return null;
+    final String location = state.matchedLocation ?? '/';
+    final bool isAuthPage = location == '/login' || location == '/signup';
+    
+    if (!loggedIn && !isAuthPage) {
+      return '/login';
+    }
+    
+    if (loggedIn && isAuthPage) {
+      return '/';
+    }
+    
+    return null; // No redirect
   },
 );
 
