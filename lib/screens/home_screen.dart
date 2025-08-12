@@ -14,6 +14,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: const Color(0xFF3b436b),
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(icon: const Icon(Icons.menu), onPressed: () {});
@@ -50,8 +51,8 @@ class HomeScreen extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         side: const BorderSide(color: Colors.black),
-                        backgroundColor: Colors.blueGrey[800],
-                        foregroundColor: Colors.white,
+ backgroundColor: const Color(0xFF3b436b), // Match AppBar color
+                        foregroundColor: Colors.white, // White text
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
@@ -67,8 +68,8 @@ class HomeScreen extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         side: const BorderSide(color: Colors.black),
-                        backgroundColor: Colors.blueGrey[800],
-                        foregroundColor: Colors.white,
+ backgroundColor: const Color(0xFF3b436b), // Match AppBar color
+                        foregroundColor: Colors.white, // White text
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
@@ -80,7 +81,7 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 20),
               Card(
                 color: Colors.blueGrey[800],
-                elevation: 4.0,
+                elevation: 0.0, // Remove elevation
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12.0),
                 ),
@@ -99,7 +100,7 @@ class HomeScreen extends StatelessWidget {
                           const SizedBox(width: 8),
                           const Text(
                             'Elizabeth Lawson',
-                            style: TextStyle(
+ style: TextStyle( // Keep text style as is
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
@@ -110,15 +111,14 @@ class HomeScreen extends StatelessWidget {
                       const SizedBox(height: 16),
                       Container(
                         height: 200,
-                        decoration: BoxDecoration(
-                          color: Colors.blueGrey[700],
+ child: ClipRRect( // Use ClipRRect to round the image corners
                           borderRadius: BorderRadius.circular(12.0),
-                        ),
-                        child: const Center(
-                          child: Icon(
-                            Icons.image,
-                            size: 50,
-                            color: Colors.white54,
+                          child: Image.asset(
+                            'assets/Group 2.png', // Placeholder image
+                            fit: BoxFit.cover,
+                            width: double.infinity, // Ensure image fills the width
+                            height: 200,
+
                           ),
                         ),
                       ),
@@ -140,8 +140,8 @@ class HomeScreen extends StatelessWidget {
                       onPressed: () => context.go('/found-items'),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
-                        backgroundColor: Colors.amber,
-                        foregroundColor: Colors.black,
+ backgroundColor: const Color(0xFFFBC02D), // Golden yellow color
+                        foregroundColor: Colors.black, // Black text
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
@@ -155,8 +155,8 @@ class HomeScreen extends StatelessWidget {
                       onPressed: () => context.go('/messages'),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
-                        backgroundColor: Colors.amber,
-                        foregroundColor: Colors.black,
+ backgroundColor: const Color(0xFFFBC02D), // Golden yellow color
+                        foregroundColor: Colors.black, // Black text
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
