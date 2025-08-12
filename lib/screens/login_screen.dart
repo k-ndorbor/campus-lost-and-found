@@ -20,27 +20,17 @@ class _LoginScreenState extends State<LoginScreen> {
       resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xFF0A185A), // Dark blue background
       body: Stack(
-        children: [
-          // Yellow wavy shape at top right
-          Positioned(
-            top: 0,
-            right: 0,
-            child: ClipPath(
-              clipper: WavyClipper(),
-              child: Container(
-                width: 200,
-                height: 200,
-                color: const Color(0xFFFFD700), // Yellow color
-              ),
-            ),
-          ),
-          // Yellow wavy shape at bottom left
-          Positioned(
+ children: [
+ // Image at bottom left
+ Positioned(
             bottom: 0,
             left: 0,
-            child: ClipPath(
-              clipper: WavyClipper(),
-              child: Container(
+            child: Image.asset(
+              'assets/images/bottom_left_wave.png', // Replace with your image path
+              fit: BoxFit.cover,
+            ),
+ right: 0,
+ child: Container(
                 width: 200,
                 height: 200,
                 color: const Color(0xFFFFD700), // Yellow color
@@ -48,6 +38,14 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
           Padding(
+ Positioned(
+ top: 0,
+ right: 0,
+ child: Image.asset(
+              'assets/images/top_right_wave.png', // Replace with your image path
+              fit: BoxFit.cover,
+ ),
+ ),
             padding: const EdgeInsets.all(20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -163,26 +161,4 @@ class _LoginScreenState extends State<LoginScreen> {
     _passwordController.dispose();
     super.dispose();
   }
-}
-
-class WavyClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    var path = Path();
-    path.lineTo(0, size.height);
-    var firstControlPoint = Offset(size.width / 4, size.height - 50);
-    var firstEndPoint = Offset(size.width / 2, size.height - 20);
-    path.quadraticBezierTo(firstControlPoint.dx, firstControlPoint.dy, firstEndPoint.dx, firstEndPoint.dy);
-
-    var secondControlPoint = Offset(size.width * 3 / 4, size.height);
-    var secondEndPoint = Offset(size.width, size.height - 30);
-    path.quadraticBezierTo(secondControlPoint.dx, secondControlPoint.dy, secondEndPoint.dx, secondEndPoint.dy);
-
-    path.lineTo(size.width, 0);
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }

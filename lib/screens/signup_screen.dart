@@ -12,32 +12,15 @@ class SignupScreen extends StatelessWidget {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: Colors.transparent,
-        body: Stack(
+        body: Stack(fit: StackFit.expand,
           children: [
-            // Yellow wave on top right
-            Positioned(
-              top: -100,
-              right: -100,
-              child: Transform.rotate(
-                angle: -0.3,
-                child: Container(
-                  width: 300,
-                  height: 300,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFFC107).withOpacity(0.8),
-                    borderRadius: BorderRadius.circular(150),
-                  ),
-                ),
-              ),
+            Image.asset(
+              '/assets/images/bottom_left_wave.png', // Replace with the actual file name
+              fit: BoxFit.cover,
+              alignment: Alignment.bottomLeft,
             ),
-            // Yellow wave on bottom left
-            Positioned(
-              bottom: -100,
-              left: -100,
-              child: Transform.rotate(
-                angle: 0.3,
-                child: Container(
-                  width: 300,
+             Image.asset(
+              '/assets/images/top_right_wave.png', // Replace with the actual file name
                   height: 300,
                   decoration: BoxDecoration(
                     color: const Color(0xFFFFC107).withOpacity(0.8),
