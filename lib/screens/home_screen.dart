@@ -45,7 +45,7 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   Expanded(
                     child: ElevatedButton.icon(
-                      onPressed: () => context.go('/add-item'),
+                      onPressed: () => context.go('/post-found-item'),
                       icon: const Icon(Icons.add),
                       label: const Text('Post found item'),
                       style: ElevatedButton.styleFrom(
@@ -62,7 +62,7 @@ class HomeScreen extends StatelessWidget {
                   const SizedBox(width: 16),
                   Expanded(
                     child: ElevatedButton.icon(
-                      onPressed: () => context.go('/add-item'),
+                      onPressed: () => context.go('/report-lost-item'),
                       icon: const Icon(Icons.add),
                       label: const Text('Report lost item'),
                       style: ElevatedButton.styleFrom(
