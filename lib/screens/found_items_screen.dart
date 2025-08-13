@@ -67,7 +67,13 @@ class FoundItemsScreen extends StatelessWidget {
                       : Icon(Icons.image),
                   title: Text(item.name),
                   subtitle: Text(item.description),
-                  // You can add more details here, like category, location, etc.
+ trailing: Column(
+ crossAxisAlignment: CrossAxisAlignment.end,
+ children: [
+ Text('Location: ${item.location}'),
+ Text('Date: ${item.date}'),
+ ],
+ ),
                 ));
               },
             );

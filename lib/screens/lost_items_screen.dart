@@ -46,7 +46,7 @@ class LostItemsScreen extends StatelessWidget {
               final item = items[index];
               return ListTile(
                 title: Text(item.name),
-                subtitle: Text(item.description),
+                subtitle: Text('${item.description}\nLocation: ${item.location}, Date: ${item.date}'),
                 leading: item.imageUrl.isNotEmpty
                     ? Image.network(
                         item.imageUrl,

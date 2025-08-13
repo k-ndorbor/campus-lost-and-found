@@ -14,6 +14,8 @@ import 'screens/add_item_screen.dart';
 import 'screens/item_detail_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/signup_screen.dart';
+import 'screens/post_found_item_screen.dart';
+import 'screens/report_lost_item_screen.dart';
 
 final GoRouter _router = GoRouter(
   routes: <RouteBase>[
@@ -36,10 +38,16 @@ final GoRouter _router = GoRouter(
       },
     ),
     GoRoute(
-      path: '/add-item',
+      path: '/post-found-item',
       builder: (BuildContext context, GoRouterState state) {
-        return const AddItemScreen();
+        return const PostFoundItemScreen();
       },
+    ),
+     GoRoute(
+      path: '/report-lost-item',
+      builder: (BuildContext context, GoRouterState state) {
+        return const ReportLostItemScreen();
+      },      
     ),
     GoRoute(
       path: '/login',

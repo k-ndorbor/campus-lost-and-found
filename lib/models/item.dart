@@ -9,6 +9,7 @@ class Item {
   final String imageUrl;
   final bool isLost;
   final String contact;
+  final String date;
 
   Item({
     required this.id,
@@ -19,6 +20,7 @@ class Item {
     required this.imageUrl,
     required this.contact,
     required this.isLost,
+    required this.date,
   });
 
   factory Item.fromFirestore(DocumentSnapshot doc) {
@@ -32,6 +34,7 @@ class Item {
       imageUrl: data['imageUrl'] ?? '',
       contact: data['contact'] ?? '',
       isLost: data['isLost'] ?? false,
+      date: data['date'] ?? '',
     );
   }
 }
