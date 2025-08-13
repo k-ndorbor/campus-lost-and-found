@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/item.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+
+import '../models/item.dart';
+
 
 class FoundItemsScreen extends StatelessWidget {
   const FoundItemsScreen({super.key});
@@ -18,9 +20,33 @@ class FoundItemsScreen extends StatelessWidget {
             context.go('/'); // Navigate back to the home screen
           },
         ),
+ backgroundColor: const Color(0xFF3b436b), // Dark blue background for AppBar
       ),
+      backgroundColor: const Color(0xFF3b436b), // Dark blue background for the screen
       body: Center(
-        child: StreamBuilder<QuerySnapshot>(
+        child: Column(
+ mainAxisSize: MainAxisSize.min,
+ children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+ focusNode: FocusNode(), // Added to prevent keyboard from showing immediately
+              decoration: InputDecoration(
+                hintText: 'Search by filter',
+                prefixIcon: const Icon(Icons.search, color: Colors.white),
+                border: OutlineInputBorder(
+ borderRadius: BorderRadius.circular(30.0),
+                  borderSide: BorderSide.none, // No border
+                ),
+ filled: true,
+                fillColor: const Color(0xFF5c638b), // Slightly lighter blue for search bar
+                hintStyle: const TextStyle(color: Colors.white70),
+              ),
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+ Expanded(
+ child: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection('items')
               .where('isLost', isEqualTo: false)
