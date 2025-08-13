@@ -13,6 +13,7 @@ import 'screens/found_items_screen.dart';
 import 'screens/item_detail_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/signup_screen.dart';
+import 'screens/splash_screen.dart';
 import 'screens/post_found_item_screen.dart';
 import 'screens/report_lost_item_screen.dart';
 
@@ -21,6 +22,10 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
+        return const SplashScreen();
+      },
+    ),
+    GoRoute(
         return const HomeScreen();
       },
     ),
@@ -49,6 +54,11 @@ final GoRouter _router = GoRouter(
       },
     ),
     GoRoute(
+      path: '/splash',
+      builder: (BuildContext context, GoRouterState state) {
+        return const SplashScreen();
+      },
+    ),
       path: '/login',
       builder: (BuildContext context, GoRouterState state) {
         return const LoginScreen();
