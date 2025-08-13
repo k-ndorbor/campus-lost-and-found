@@ -10,7 +10,6 @@ import 'firebase_options.dart';
 import 'screens/home_screen.dart';
 import 'screens/lost_items_screen.dart';
 import 'screens/found_items_screen.dart';
-import 'screens/add_item_screen.dart';
 import 'screens/item_detail_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/signup_screen.dart';
@@ -43,11 +42,11 @@ final GoRouter _router = GoRouter(
         return const PostFoundItemScreen();
       },
     ),
-     GoRoute(
+    GoRoute(
       path: '/report-lost-item',
       builder: (BuildContext context, GoRouterState state) {
         return const ReportLostItemScreen();
-      },      
+      },
     ),
     GoRoute(
       path: '/login',
@@ -72,15 +71,15 @@ final GoRouter _router = GoRouter(
     final bool loggedIn = FirebaseAuth.instance.currentUser != null;
     final String location = state.matchedLocation ?? '/';
     final bool isAuthPage = location == '/login' || location == '/signup';
-    
+
     if (!loggedIn && !isAuthPage) {
       return '/login';
     }
-    
+
     if (loggedIn && isAuthPage) {
       return '/';
     }
-    
+
     return null; // No redirect
   },
 );
@@ -96,7 +95,8 @@ Future<void> main() async {
       value: FirebaseAuth.instance.authStateChanges(),
       initialData: null,
       child: ChangeNotifierProvider(
-        create: (context) => ThemeProvider(), // Assuming you have a ThemeProvider
+        create: (context) =>
+            ThemeProvider(), // Assuming you have a ThemeProvider
         child: const MyApp(),
       ),
     ),
