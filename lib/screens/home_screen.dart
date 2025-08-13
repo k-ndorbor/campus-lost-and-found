@@ -13,8 +13,9 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF1A237E),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF3b436b),
+        backgroundColor: const Color(0xFF1A237E),
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(icon: const Icon(Icons.menu), onPressed: () {});
@@ -34,7 +35,6 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      backgroundColor: const Color(0xFF3b436b),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -51,7 +51,8 @@ class HomeScreen extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         side: const BorderSide(color: Colors.black),
- backgroundColor: const Color(0xFF3b436b), // Match AppBar color
+                        backgroundColor:
+                            const Color(0xFF1A237E), // Match AppBar color
                         foregroundColor: Colors.white, // White text
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
@@ -68,7 +69,8 @@ class HomeScreen extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         side: const BorderSide(color: Colors.black),
- backgroundColor: const Color(0xFF3b436b), // Match AppBar color
+                        backgroundColor:
+                            const Color(0xFF1A237E), // Match AppBar color
                         foregroundColor: Colors.white, // White text
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
@@ -94,13 +96,15 @@ class HomeScreen extends StatelessWidget {
                         children: [
                           CircleAvatar(
                             backgroundColor: Colors.blueGrey[700],
-                            child: const Icon(Icons.person, color: Colors.white),
+                            child:
+                                const Icon(Icons.person, color: Colors.white),
                             radius: 20,
                           ),
                           const SizedBox(width: 8),
                           const Text(
                             'Elizabeth Lawson',
- style: TextStyle( // Keep text style as is
+                            style: TextStyle(
+                              // Keep text style as is
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
@@ -111,20 +115,22 @@ class HomeScreen extends StatelessWidget {
                       const SizedBox(height: 16),
                       Container(
                         height: 200,
- child: ClipRRect( // Use ClipRRect to round the image corners
+                        child: ClipRRect(
+                          // Use ClipRRect to round the image corners
                           borderRadius: BorderRadius.circular(12.0),
                           child: Image.asset(
                             'assets/Group 2.png', // Placeholder image - Replace with dynamic image data
                             fit: BoxFit.cover,
-                            width: double.infinity, // Ensure image fills the width
+                            width:
+                                double.infinity, // Ensure image fills the width
                             height: 200,
-
                           ),
                         ),
                       ),
                       const SizedBox(height: 16),
                       _buildInfoText('Item name: Car keys'),
-                      _buildInfoText('Description: Black with a leather key holder'),
+                      _buildInfoText(
+                          'Description: Black with a leather key holder'),
                       _buildInfoText('Location lost: CSOB building'),
                       _buildInfoText('Date lost: 06/08/25'),
                       _buildInfoText('Colour: Black and silver'),
@@ -140,7 +146,8 @@ class HomeScreen extends StatelessWidget {
                       onPressed: () => context.go('/found-items'),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
- backgroundColor: const Color(0xFFFBC02D), // Golden yellow color
+                        backgroundColor:
+                            const Color(0xFFFBC02D), // Golden yellow color
                         foregroundColor: Colors.black, // Black text
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
@@ -155,7 +162,8 @@ class HomeScreen extends StatelessWidget {
                       onPressed: () => context.go('/messages'),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 12),
- backgroundColor: const Color(0xFFFBC02D), // Golden yellow color
+                        backgroundColor:
+                            const Color(0xFFFBC02D), // Golden yellow color
                         foregroundColor: Colors.black, // Black text
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
