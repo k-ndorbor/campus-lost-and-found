@@ -12,14 +12,14 @@ class FoundItemsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Found Items'),
-        backgroundColor: const Color(0xFF3b436b),
+        title: const Text('Found Items', style: TextStyle(color: Colors.white)),
+        backgroundColor: const Color(0xFF1A237E),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => context.go('/'),
         ),
       ),
-      backgroundColor: const Color(0xFF3b436b),
+      backgroundColor: const Color(0xFF1A237E),
       body: Column(
         children: [
           Padding(
@@ -52,7 +52,10 @@ class FoundItemsScreen extends StatelessWidget {
                   return Center(
                     child: Text(
                       'Error loading items',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.copyWith(color: Colors.white),
                     ),
                   );
                 }
@@ -69,7 +72,10 @@ class FoundItemsScreen extends StatelessWidget {
                   return Center(
                     child: Text(
                       'No found items yet.',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.copyWith(color: Colors.white),
                     ),
                   );
                 }
@@ -81,7 +87,7 @@ class FoundItemsScreen extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final doc = items[index];
                     final item = Item.fromFirestore(doc);
-                    
+
                     return Card(
                       margin: const EdgeInsets.only(bottom: 12.0),
                       color: const Color(0xFF5c638b),
@@ -94,35 +100,42 @@ class FoundItemsScreen extends StatelessWidget {
                             children: [
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(8.0),
-                                child: item.imageUrl != null && item.imageUrl!.isNotEmpty
+                                child: item.imageUrl != null &&
+                                        item.imageUrl!.isNotEmpty
                                     ? CachedNetworkImage(
                                         imageUrl: item.imageUrl!,
                                         width: 80,
                                         height: 80,
                                         fit: BoxFit.cover,
-                                        placeholder: (context, url) => Container(
+                                        placeholder: (context, url) =>
+                                            Container(
                                           width: 80,
                                           height: 80,
                                           color: Colors.grey[800],
                                           child: const Center(
                                             child: CircularProgressIndicator(
                                               strokeWidth: 2.0,
-                                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                      Colors.white),
                                             ),
                                           ),
                                         ),
-                                        errorWidget: (context, url, error) => Container(
+                                        errorWidget: (context, url, error) =>
+                                            Container(
                                           width: 80,
                                           height: 80,
                                           color: Colors.grey[800],
-                                          child: const Icon(Icons.error, color: Colors.white54),
+                                          child: const Icon(Icons.error,
+                                              color: Colors.white54),
                                         ),
                                       )
                                     : Container(
                                         width: 80,
                                         height: 80,
                                         color: Colors.grey[800],
-                                        child: const Icon(Icons.image, color: Colors.white54, size: 40),
+                                        child: const Icon(Icons.image,
+                                            color: Colors.white54, size: 40),
                                       ),
                               ),
                               const SizedBox(width: 16.0),
@@ -153,11 +166,13 @@ class FoundItemsScreen extends StatelessWidget {
                                     const SizedBox(height: 8.0),
                                     Row(
                                       children: [
-                                        const Icon(Icons.location_on, size: 14.0, color: Colors.white54),
+                                        const Icon(Icons.location_on,
+                                            size: 14.0, color: Colors.white54),
                                         const SizedBox(width: 4.0),
                                         Expanded(
                                           child: Text(
-                                            item.location ?? 'Location not specified',
+                                            item.location ??
+                                                'Location not specified',
                                             style: const TextStyle(
                                               color: Colors.white70,
                                               fontSize: 12.0,
@@ -171,10 +186,11 @@ class FoundItemsScreen extends StatelessWidget {
                                     const SizedBox(height: 4.0),
                                     Row(
                                       children: [
-                                        const Icon(Icons.calendar_today, size: 14.0, color: Colors.white54),
+                                        const Icon(Icons.calendar_today,
+                                            size: 14.0, color: Colors.white54),
                                         const SizedBox(width: 4.0),
                                         Text(
-                                          item.date.isNotEmpty 
+                                          item.date.isNotEmpty
                                               ? item.date
                                               : 'Date not specified',
                                           style: const TextStyle(
