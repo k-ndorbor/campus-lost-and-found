@@ -19,13 +19,17 @@ import 'screens/report_lost_item_screen.dart';
 
 final GoRouter _router = GoRouter(
   routes: <RouteBase>[
-    GoRoute(
-      path: '/',
+    // Splash Screen
+    GoRoute( // Initial route
+      path: '/splash',
       builder: (BuildContext context, GoRouterState state) {
         return const SplashScreen();
       },
     ),
     GoRoute(
+      path: '/home',
+ builder: (BuildContext context, GoRouterState state) {
+
         return const HomeScreen();
       },
     ),
@@ -53,13 +57,13 @@ final GoRouter _router = GoRouter(
         return const ReportLostItemScreen();
       },
     ),
-    GoRoute(
-      path: '/splash',
-      builder: (BuildContext context, GoRouterState state) {
+    // Authentication Screens
+     GoRoute(path: '/', builder: (context, state) {
         return const SplashScreen();
       },
     ),
       path: '/login',
+
       builder: (BuildContext context, GoRouterState state) {
         return const LoginScreen();
       },
