@@ -3,7 +3,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:provider/provider.dart';
 
 import 'firebase_options.dart';
@@ -13,23 +12,37 @@ import 'screens/found_items_screen.dart';
 import 'screens/item_detail_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/signup_screen.dart';
-import 'screens/splash_screen.dart';
+import 'screens/splash_screen.dart' show AnimatedSplashScreen;
 import 'screens/post_found_item_screen.dart';
 import 'screens/report_lost_item_screen.dart';
+import 'services/item_service.dart';
 
 final GoRouter _router = GoRouter(
   routes: <RouteBase>[
-    // Splash Screen
-    GoRoute( // Initial route
-      path: '/splash',
+    // Initial route (Splash Screen)
+    GoRoute(
+      path: '/',
       builder: (BuildContext context, GoRouterState state) {
-        return const SplashScreen();
+        return const AnimatedSplashScreen();
+      },
+    ),
+    // Authentication Screens
+    GoRoute(
+      path: '/login',
+      builder: (BuildContext context, GoRouterState state) {
+        return const LoginScreen();
       },
     ),
     GoRoute(
+      path: '/signup',
+      builder: (BuildContext context, GoRouterState state) {
+        return const SignupScreen();
+      },
+    ),
+    // Main App Screens
+    GoRoute(
       path: '/home',
- builder: (BuildContext context, GoRouterState state) {
-
+      builder: (BuildContext context, GoRouterState state) {
         return const HomeScreen();
       },
     ),
@@ -57,23 +70,6 @@ final GoRouter _router = GoRouter(
         return const ReportLostItemScreen();
       },
     ),
-    // Authentication Screens
-     GoRoute(path: '/', builder: (context, state) {
-        return const SplashScreen();
-      },
-    ),
-      path: '/login',
-
-      builder: (BuildContext context, GoRouterState state) {
-        return const LoginScreen();
-      },
-    ),
-    GoRoute(
-      path: '/signup',
-      builder: (BuildContext context, GoRouterState state) {
-        return const SignupScreen();
-      },
-    ),
     GoRoute(
       path: '/items/:itemId',
       builder: (BuildContext context, GoRouterState state) {
@@ -82,19 +78,22 @@ final GoRouter _router = GoRouter(
     ),
   ],
   redirect: (BuildContext context, GoRouterState state) {
-    final bool loggedIn = FirebaseAuth.instance.currentUser != null;
-    final String location = state.matchedLocation ?? '/';
-    final bool isAuthPage = location == '/login' || location == '/signup';
+    final bool isLoggedIn = FirebaseAuth.instance.currentUser != null;
+    final String currentLocation = state.matchedLocation;
+    final bool isAuthPage = currentLocation == '/login' || currentLocation == '/signup' || currentLocation == '/';
 
-    if (!loggedIn && !isAuthPage) {
+    // If user is not logged in and not on an auth page, redirect to login
+    if (!isLoggedIn && !isAuthPage) {
       return '/login';
     }
 
-    if (loggedIn && isAuthPage) {
-      return '/';
+    // If user is logged in and on an auth page, redirect to home
+    if (isLoggedIn && isAuthPage && currentLocation != '/') {
+      return '/home';
     }
 
-    return null; // No redirect
+    // No redirect needed
+    return null;
   },
 );
 
@@ -104,15 +103,25 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  
   runApp(
-    StreamProvider<User?>.value(
-      value: FirebaseAuth.instance.authStateChanges(),
-      initialData: null,
-      child: ChangeNotifierProvider(
-        create: (context) =>
-            ThemeProvider(), // Assuming you have a ThemeProvider
-        child: const MyApp(),
-      ),
+    MultiProvider(
+      providers: [
+        // Stream for authentication state
+        StreamProvider<User?>(
+          initialData: null,
+          create: (context) => FirebaseAuth.instance.authStateChanges(),
+        ),
+        // Theme provider
+        ChangeNotifierProvider(
+          create: (context) => ThemeProvider(),
+        ),
+        // ItemService provider
+        ChangeNotifierProvider<ItemService>(
+          create: (context) => ItemService(),
+        ),
+      ],
+      child: const MyApp(),
     ),
   );
 }

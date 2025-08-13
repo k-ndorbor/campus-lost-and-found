@@ -1,11 +1,18 @@
+import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../models/item.dart';
 
-class ItemService {
+class ItemService with ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  @override
+  void dispose() {
+    // Cancel any subscriptions or clean up resources here
+    super.dispose();
+  }
 
   // Add a new item to Firestore
   Future<void> addItem(Item item) async {
