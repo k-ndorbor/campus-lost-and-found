@@ -26,7 +26,7 @@ class HomeScreen extends StatelessWidget {
   Widget _buildItemCard(Item item, BuildContext context) {
     return Card(
       color: Colors.grey[200], // Grey background
-      elevation: 2.0,
+      elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
       ),
@@ -151,7 +151,10 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: const Color(0xFF1A237E),
-        title: const Text('Campus Lost & Found'),
+        title: const Text(
+          'Campus Lost & Found',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         // leading: Builder(
         //   builder: (BuildContext context) {
         //     return IconButton(
