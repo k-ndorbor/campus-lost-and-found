@@ -152,16 +152,16 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: const Color(0xFF1A237E),
         title: const Text('Campus Lost & Found'),
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () {
-                // TODO: Implement drawer menu
-              },
-            );
-          },
-        ),
+        // leading: Builder(
+        //   builder: (BuildContext context) {
+        //     return IconButton(
+        //       icon: const Icon(Icons.menu),
+        //       onPressed: () {
+        //         // TODO: Implement drawer menu
+        //       },
+        //     );
+        //   },
+        // ),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -169,6 +169,51 @@ class HomeScreen extends StatelessWidget {
             tooltip: 'Logout',
           ),
         ],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(
+                color: Color(0xFF1A237E),
+              ),
+              child: Text(
+                'Menu',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.home),
+              title: const Text('Home'),
+              onTap: () {
+                context.go('/home');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('Logout'),
+              onTap: () => _signOut(context),
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Found Items'),
+              onTap: () {
+                context.go('/found-items');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Lost Items'),
+              onTap: () {
+                context.go('/lost-items');
+              },
+            ),
+          ],
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
