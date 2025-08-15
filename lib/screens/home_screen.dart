@@ -25,83 +25,122 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildItemCard(Item item, BuildContext context) {
     return Card(
-      color: const Color(0xFF1A237E), // Match background color
-      elevation: 0.0, // Remove elevation
+      color: Colors.grey[200], // Grey background
+      elevation: 2.0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),
       ),
-      child: InkWell(
-        onTap: () {
-          // Navigate to item detail screen
-          context.go('/items/${item.id}');
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  // Placeholder for user profile picture
-                  CircleAvatar(
-                    backgroundColor: Colors.blueGrey[700],
-                    child: const Icon(Icons.person, color: Colors.white),
-                    radius: 20,
-                  ),
-                  const SizedBox(width: 8),
-                  // Placeholder for user name
-                  const Text(
-                    'Elizabeth Lawson', // Replace with actual user name if available
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              // Item Image
-              if (item.imageUrl.isNotEmpty)
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Badge for Lost/Found
                 Container(
-                  height: 200,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12.0),
-                    child: CachedNetworkImage(
-                      imageUrl: item.imageUrl,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      height: 200,
-                      placeholder: (context, url) => Container(
-                        color: Colors.grey[300],
-                        child: const Center(child: CircularProgressIndicator()),
-                      ),
-                      errorWidget: (context, url, error) => Container(
-                        color: Colors.grey[300],
-                        child: const Icon(Icons.error),
-                      ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: item.isLost ? Colors.red[100] : Colors.green[100],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    item.isLost ? 'LOST' : 'FOUND',
+                    style: TextStyle(
+                      color: item.isLost ? Colors.red[800] : Colors.green[800],
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
                     ),
                   ),
                 ),
-              const SizedBox(height: 16),
-              _buildInfoText('Item name: ${item.name}'),
-              _buildInfoText('Description: ${item.description}'),
-              _buildInfoText(item.isLost ? 'Location lost: ${item.location}' : 'Current location: ${item.location}'),
-              _buildInfoText(item.isLost ? 'Date lost: ${item.date}' : 'Date found: ${item.date}'),
-              _buildInfoText('Colour: ${item.color ?? 'N/A'}'), // Assuming item has a 'color' field
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+                // Message button
+                IconButton(
+                  icon: const Icon(Icons.message, color: Colors.blue),
+                  onPressed: () {
+                    // TODO: Implement message functionality
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            // Item Image
+            if (item.imageUrl.isNotEmpty)
+              Container(
+                height: 200,
+                width: double.infinity,
 
-  Widget _buildInfoText(String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2.0),
-      child: Text(
-        text,
-        style: const TextStyle(fontSize: 16, color: Colors.white),
+                // decoration: BoxDecoration(
+                //   borderRadius: BorderRadius.circular(8.0),
+                //   boxShadow: [
+                //     BoxShadow(
+                //       color: Colors.black.withOpacity(0.1),
+                //       blurRadius: 4,
+                //       offset: const Offset(0, 2),
+                //     ),
+                //   ],
+                // ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: CachedNetworkImage(
+                    imageUrl: item.imageUrl,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Container(
+                      color: Colors.grey[300],
+                      child: const Center(child: CircularProgressIndicator()),
+                    ),
+                    errorWidget: (context, url, error) => Container(
+                      color: Colors.grey[300],
+                      child: const Icon(Icons.error),
+                    ),
+                  ),
+                ),
+              ),
+            const SizedBox(height: 12),
+            // Item Details
+            Text(
+              item.name,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              item.description,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[800],
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(Icons.location_on, size: 16, color: Colors.grey[600]),
+                const SizedBox(width: 4),
+                Text(
+                  item.location,
+                  style: TextStyle(color: Colors.grey[700]),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
+                const SizedBox(width: 4),
+                Text(
+                  item.date,
+                  style: TextStyle(color: Colors.grey[700]),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -109,7 +148,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1A237E),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: const Color(0xFF1A237E),
         title: const Text('Campus Lost & Found'),
@@ -132,133 +171,107 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              // Action Buttons
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () => context.go('/post-found-item'),
-                      icon: const Icon(Icons.add),
-                      label: const Text('Post found item'),
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        backgroundColor: const Color(0xFF1A237E),
-                        foregroundColor: Colors.white, // White text
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Action Buttons
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => context.go('/post-found-item'),
+                    icon: const Icon(Icons.add),
+                    label: const Text('Post found item'),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      backgroundColor: const Color(0xFF1A237E),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        side: const BorderSide(color: Colors.white),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () => context.go('/report-lost-item'),
-                      icon: const Icon(Icons.add),
-                      label: const Text('Report lost item'),
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        backgroundColor: const Color(0xFF1A237E),
-                        foregroundColor: Colors.white, // White text
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => context.go('/report-lost-item'),
+                    icon: const Icon(Icons.add),
+                    label: const Text('Report lost item'),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      backgroundColor: const Color(0xFF1A237E),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        side: const BorderSide(color: Colors.white),
                       ),
                     ),
                   ),
-                ],
-              ),
-              const SizedBox(height: 24),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
 
-              // StreamBuilder for Lost Items
-              StreamBuilder<List<Item>>(
-                stream: Provider.of<ItemService>(context).getItems(isLost: true),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  }
+            // StreamBuilder for All Items
+            StreamBuilder<List<Item>>(
+              stream: Provider.of<ItemService>(context).getAllItems(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
 
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-                  final lostItems = snapshot.data ?? [];
+                final items = snapshot.data ?? [];
 
-                  if (lostItems.isEmpty) {
-                    return const Center(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 24.0),
-                        child: Text(
-                          'No recent lost items.',
-                          style: TextStyle(color: Colors.white),
-                        ),
+                if (items.isEmpty) {
+                  return const Center(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 24.0),
+                      child: Text(
+                        'No items found.',
+                        style: TextStyle(color: Colors.black87, fontSize: 16),
                       ),
+                    ),
+                  );
+                }
+
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: _buildItemCard(items[index], context),
                     );
-                  }
+                  },
+                );
+              },
+            ),
+            const SizedBox(height: 16),
 
-                  // Display only the most recent lost item for the design
-                  final recentLostItem = lostItems.first;
-                  return _buildItemCard(recentLostItem, context);
-                },
-              ),
-              const SizedBox(height: 24),
-
-              // StreamBuilder for Found Items (Displaying only one for now as per design)
-               StreamBuilder<List<Item>>(
-                stream: Provider.of<ItemService>(context).getItems(isLost: false),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  }
-
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-
-                  final foundItems = snapshot.data ?? [];
-
-                  if (foundItems.isEmpty) {
-                    return const Center(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(vertical: 24.0),
-                        child: Text(
-                          'No recent found items.',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    );
-                  }
-
-                  // Display only the most recent found item for the design
-                  final recentFoundItem = foundItems.first;
-                  return _buildItemCard(recentFoundItem, context);
-
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      _buildInfoText('Item name: Car keys'),
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        backgroundColor:
-                            const Color(0xFFFBC02D), // Golden yellow color
-                        foregroundColor: Colors.black, // Black text
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
-                      child: const Text('Messages'),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+            // // Messages Button
+            // ElevatedButton(
+            //   onPressed: () {
+            //     // Navigate to messages screen
+            //   },
+            //   style: ElevatedButton.styleFrom(
+            //     padding: const EdgeInsets.symmetric(vertical: 12),
+            //     backgroundColor: const Color(0xFFFBC02D), // Golden yellow color
+            //     foregroundColor: Colors.black, // Black text
+            //     shape: RoundedRectangleBorder(
+            //       borderRadius: BorderRadius.circular(8.0),
+            //     ),
+            //   ),
+            //   child: const Text('Messages'),
+            // ),
+          ],
         ),
       ),
     );

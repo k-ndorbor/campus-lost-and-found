@@ -45,6 +45,23 @@ class ItemService with ChangeNotifier {
     }
   }
 
+  // Get all items (both lost and found)
+  Stream<List<Item>> getAllItems() {
+    try {
+      return _firestore
+          .collection('items')
+          .orderBy('createdAt', descending: true)
+          .snapshots()
+          .map((snapshot) {
+        return snapshot.docs
+            .map((doc) => Item.fromFirestore(doc))
+            .toList();
+      });
+    } catch (e) {
+      throw Exception('Failed to get all items: $e');
+    }
+  }
+
   // Update an existing item
   Future<void> updateItem(Item item) async {
     try {
