@@ -12,7 +12,7 @@ class FoundItemsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Found Items', style: TextStyle(color: Colors.white)),
+        title: const Text('Found Items', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         backgroundColor: const Color(0xFF1A237E),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -22,25 +22,6 @@ class FoundItemsScreen extends StatelessWidget {
       backgroundColor: const Color(0xFF1A237E),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              focusNode: FocusNode(),
-              decoration: InputDecoration(
-                hintText: 'Search by filter',
-                prefixIcon: const Icon(Icons.search, color: Colors.white),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                  borderSide: BorderSide.none,
-                ),
-                filled: true,
-                fillColor: const Color(0xFF5c638b),
-                hintStyle: const TextStyle(color: Colors.white70),
-                contentPadding: const EdgeInsets.symmetric(vertical: 0),
-              ),
-              style: const TextStyle(color: Colors.white),
-            ),
-          ),
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
@@ -82,7 +63,7 @@ class FoundItemsScreen extends StatelessWidget {
 
                 final items = snapshot.data!.docs;
                 return ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  padding: const EdgeInsets.all(16.0),
                   itemCount: items.length,
                   itemBuilder: (context, index) {
                     final doc = items[index];
@@ -91,9 +72,8 @@ class FoundItemsScreen extends StatelessWidget {
                     return Card(
                       margin: const EdgeInsets.only(bottom: 12.0),
                       color: const Color(0xFF5c638b),
-                      child: InkWell(
+                      child: GestureDetector(
                         onTap: () => context.go('/items/${doc.id}'),
-                        borderRadius: BorderRadius.circular(12.0),
                         child: Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: Row(
