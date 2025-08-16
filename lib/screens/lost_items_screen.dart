@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 
@@ -66,7 +67,8 @@ class LostItemsScreen extends StatelessWidget {
                       .where('isLost', isEqualTo: true)
                       .snapshots(),
                   builder: (context, snapshot) {
-                    final count = snapshot.hasData ? snapshot.data!.docs.length : 0;
+                    final count =
+                        snapshot.hasData ? snapshot.data!.docs.length : 0;
                     return Text(
                       '$count Items Lost',
                       style: TextStyle(
@@ -118,7 +120,8 @@ class LostItemsScreen extends StatelessWidget {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
                     child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF1A237E)),
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Color(0xFF1A237E)),
                     ),
                   );
                 }
@@ -134,7 +137,8 @@ class LostItemsScreen extends StatelessWidget {
 
                 final items = snapshot.data!.docs;
                 return GridView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     childAspectRatio: 0.7,
@@ -199,7 +203,7 @@ class LostItemsScreen extends StatelessWidget {
         child: ConstrainedBox(
           constraints: const BoxConstraints(
             minHeight: 100,
-            maxHeight: 350,
+            maxHeight: 400,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -260,74 +264,62 @@ class LostItemsScreen extends StatelessWidget {
 
                     const SizedBox(height: 6),
 
-                    // Location and Date
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    // Location and Message Button
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         // Location
-                        Row(
-                          children: [
-                            Icon(Icons.location_on,
-                                size: 14, color: Colors.grey[600]),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                item.location,
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.grey[600],
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Icon(Icons.location_on,
+                                  size: 14, color: Colors.grey[600]),
+                              const SizedBox(width: 4),
+                              Expanded(
+                                child: Text(
+                                  item.location,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.grey[600],
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
 
-                        const SizedBox(height: 4),
-
-                        // Date
-                        Row(
-                          children: [
-                            Icon(Icons.calendar_today,
-                                size: 14, color: Colors.grey[600]),
-                            const SizedBox(width: 4),
-                            Text(
-                              _formatDate(item.date),
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                          ],
+                        // Message Button
+                        IconButton(
+                          icon: const Icon(Icons.message,
+                              size: 18, color: Color(0xFF1A237E)),
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                          onPressed: () async {
+                            await _startConversation(context, item, docId);
+                          },
+                          tooltip: 'Message about this item',
                         ),
                       ],
                     ),
 
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 2),
 
-                    // Contact Button
-                    SizedBox(
-                      width: double.infinity,
-                      height: 32,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // TODO: Implement contact functionality
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF1A237E),
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                    // Date
+                    Row(
+                      children: [
+                        Icon(Icons.calendar_today,
+                            size: 14, color: Colors.grey[600]),
+                        const SizedBox(width: 4),
+                        Text(
+                          _formatDate(item.date),
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.grey[600],
                           ),
-                          elevation: 0,
                         ),
-                        child: const Text(
-                          'Contact Finder',
-                          style: TextStyle(fontSize: 12),
-                        ),
-                      ),
+                      ],
                     ),
                   ],
                 ),
@@ -345,6 +337,99 @@ class LostItemsScreen extends StatelessWidget {
       return DateFormat('MMM d, yyyy').format(date);
     } catch (e) {
       return 'Date not specified';
+    }
+  }
+
+  Future<void> _startConversation(
+      BuildContext context, Item item, String docId) async {
+    try {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please sign in to message')),
+          );
+          context.go('/login');
+        }
+        return;
+      }
+
+      // Check if user is trying to message themselves
+      if (currentUser.uid == item.userId) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('This is your own post')),
+          );
+        }
+        return;
+      }
+
+      // Fetch the other user's name from the users collection
+      String otherUserName = 'User';
+      try {
+        final userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(item.userId)
+            .get();
+
+        if (userDoc.exists) {
+          final userData = userDoc.data() as Map<String, dynamic>;
+          otherUserName = userData['name'] ?? userData['displayName'] ?? 'User';
+        }
+      } catch (e) {
+        // If we can't fetch the user's name, fall back to contact or default
+        otherUserName = item.contact.isNotEmpty ? item.contact : 'User';
+      }
+
+      // Check if conversation already exists
+      final conversationQuery = await FirebaseFirestore.instance
+          .collection('conversations')
+          .where('participants', arrayContains: currentUser.uid)
+          .where('itemId', isEqualTo: docId)
+          .limit(1)
+          .get();
+
+      String conversationId;
+
+      if (conversationQuery.docs.isNotEmpty) {
+        // Use existing conversation
+        conversationId = conversationQuery.docs.first.id;
+      } else {
+        // Create new conversation
+        final conversationRef =
+            await FirebaseFirestore.instance.collection('conversations').add({
+          'participants': [currentUser.uid, item.userId],
+          'itemId': docId,
+          'lastMessage': '',
+          'lastMessageAt': FieldValue.serverTimestamp(),
+          'lastMessageSenderId': currentUser.uid,
+          'lastMessageIsRead': false,
+        });
+        conversationId = conversationRef.id;
+      }
+
+      if (context.mounted) {
+        // Navigate to chat screen
+        context.go(
+          '/chat/$conversationId',
+          extra: {
+            'currentUserId': currentUser.uid,
+            'otherUserId': item.userId,
+            'itemId': docId,
+            'otherUserName': otherUserName,
+            'otherUserImageUrl': null,
+          },
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to start conversation. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 }

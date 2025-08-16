@@ -31,7 +31,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => context.pop(),
+          onPressed: () => context.go('/'),
         ),
       ),
       body: FutureBuilder<DocumentSnapshot>(
@@ -180,7 +180,9 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                       _buildDetailRow(
                         Icons.location_on_outlined,
                         'Location',
-                        item.location.isNotEmpty ? item.location : 'Not specified',
+                        item.location.isNotEmpty
+                            ? item.location
+                            : 'Not specified',
                       ),
 
                       const SizedBox(height: 16),
@@ -299,22 +301,92 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
     }
   }
 
+  Future<void> _startConversation(BuildContext context, String contactInfo) async {
+    try {
+      // In a real app, you would get the current user's ID from your auth service
+      final currentUserId = 'current_user_id'; // Replace with actual user ID
+      
+      // Get the item owner's ID (assuming it's stored in the contact field for this example)
+      // In a real app, you would have a separate field for the owner's user ID
+      final otherUserId = contactInfo; // This should be the owner's user ID in a real app
+      
+      if (currentUserId == otherUserId) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('You cannot message yourself')),
+        );
+        return;
+      }
+
+      // Check if a conversation already exists between these users about this item
+      final conversationQuery = await FirebaseFirestore.instance
+          .collection('conversations')
+          .where('participants', arrayContains: currentUserId)
+          .where('itemId', isEqualTo: widget.itemId)
+          .limit(1)
+          .get();
+
+      String conversationId;
+      
+      if (conversationQuery.docs.isNotEmpty) {
+        // Use existing conversation
+        conversationId = conversationQuery.docs.first.id;
+      } else {
+        // Create new conversation
+        final conversationRef = await FirebaseFirestore.instance
+            .collection('conversations')
+            .add({
+          'participants': [currentUserId, otherUserId],
+          'itemId': widget.itemId,
+          'lastMessage': '',
+          'lastMessageAt': FieldValue.serverTimestamp(),
+          'lastMessageSenderId': currentUserId,
+          'lastMessageIsRead': false,
+        });
+        conversationId = conversationRef.id;
+      }
+
+      if (!mounted) return;
+      
+      // Navigate to chat screen
+      context.go(
+        '/chat/$conversationId',
+        extra: {
+          'currentUserId': currentUserId,
+          'otherUserId': otherUserId,
+          'itemId': widget.itemId,
+          // In a real app, you would fetch these from your users collection
+          'otherUserName': 'Item Owner', // Replace with actual name
+          'otherUserImageUrl': null, // Replace with actual image URL
+        },
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to start conversation. Please try again.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   void _showContactDialog(BuildContext context, String contactInfo) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Contact Information'),
+        title: const Text('Contact Finder'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('You can contact the finder using:'),
+            const Text('Would you like to message the finder about this item?'),
             const SizedBox(height: 16),
             Text(
-              contactInfo,
+              'Contact: $contactInfo',
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 16,
+                fontSize: 14,
               ),
             ),
           ],
@@ -322,9 +394,21 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('CLOSE'),
+            child: const Text('CANCEL'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context); // Close the dialog
+              _startConversation(context, contactInfo);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF1A237E),
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('MESSAGE'),
           ),
         ],
       ),
     );
   }
+}

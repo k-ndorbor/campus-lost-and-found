@@ -15,7 +15,13 @@ import 'screens/signup_screen.dart';
 import 'screens/splash_screen.dart' show AnimatedSplashScreen;
 import 'screens/post_found_item_screen.dart';
 import 'screens/report_lost_item_screen.dart';
+import 'screens/chat_screen.dart';
+import 'screens/conversations_screen.dart';
+import 'screens/notification_test_screen.dart';
 import 'services/item_service.dart';
+import 'services/notification_service.dart';
+import 'services/chat_notification_helper.dart';
+import 'widgets/in_app_notification.dart';
 
 final GoRouter _router = GoRouter(
   routes: <RouteBase>[
@@ -76,6 +82,36 @@ final GoRouter _router = GoRouter(
         return ItemDetailScreen(itemId: state.pathParameters['itemId']!);
       },
     ),
+    // Messaging Screens
+    GoRoute(
+      path: '/messages',
+      builder: (BuildContext context, GoRouterState state) {
+        // In a real app, you would get the current user ID from your auth service
+        final currentUserId = FirebaseAuth.instance.currentUser?.uid ?? '';
+        return ConversationsScreen(currentUserId: currentUserId);
+      },
+    ),
+    GoRoute(
+      path: '/chat/:conversationId',
+      builder: (BuildContext context, GoRouterState state) {
+        final extra = state.extra as Map<String, dynamic>? ?? {};
+        return ChatScreen(
+          conversationId: state.pathParameters['conversationId']!,
+          currentUserId: extra['currentUserId'] ?? '',
+          otherUserId: extra['otherUserId'] ?? '',
+          itemId: extra['itemId'],
+          otherUserName: extra['otherUserName'],
+          otherUserImageUrl: extra['otherUserImageUrl'],
+        );
+      },
+    ),
+    // Notification Test Screen
+    GoRoute(
+      path: '/notification-test',
+      builder: (BuildContext context, GoRouterState state) {
+        return const NotificationTestScreen();
+      },
+    ),
   ],
   redirect: (BuildContext context, GoRouterState state) {
     final bool isLoggedIn = FirebaseAuth.instance.currentUser != null;
@@ -103,6 +139,9 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  
+  // Initialize notification service
+  await NotificationService().initialize();
   
   runApp(
     MultiProvider(
@@ -143,6 +182,11 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       routerConfig: _router,
+      builder: (context, child) {
+        return InAppNotificationOverlay(
+          child: child!,
+        );
+      },
     );
   }
 }

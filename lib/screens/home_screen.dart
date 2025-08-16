@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../models/item.dart';
@@ -58,9 +58,107 @@ class HomeScreen extends StatelessWidget {
                 // Message button
                 IconButton(
                   icon: const Icon(Icons.message, color: Colors.blue),
-                  onPressed: () {
-                    // TODO: Implement message functionality
+                  onPressed: () async {
+                    try {
+                      final currentUser = FirebaseAuth.instance.currentUser;
+                      if (currentUser == null) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Please sign in to message')),
+                          );
+                          context.go('/login');
+                        }
+                        return;
+                      }
+
+                      // Check if user is trying to message themselves
+                      if (currentUser.uid == item.userId) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('This is your own post')),
+                          );
+                        }
+                        return;
+                      }
+
+                      // Fetch the other user's name from the users collection
+                      String otherUserName = 'User';
+                      try {
+                        final userDoc = await FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(item.userId)
+                            .get();
+
+                        if (userDoc.exists) {
+                          final userData =
+                              userDoc.data() as Map<String, dynamic>;
+                          otherUserName = userData['name'] ??
+                              userData['displayName'] ??
+                              'User';
+                        }
+                      } catch (e) {
+                        // If we can't fetch the user's name, fall back to contact or default
+                        otherUserName =
+                            item.contact.isNotEmpty ? item.contact : 'User';
+                      }
+
+                      // Check if conversation already exists
+                      final conversationQuery = await FirebaseFirestore.instance
+                          .collection('conversations')
+                          .where('participants', arrayContains: currentUser.uid)
+                          .where('itemId', isEqualTo: item.id)
+                          .limit(1)
+                          .get();
+
+                      String conversationId;
+
+                      if (conversationQuery.docs.isNotEmpty) {
+                        // Use existing conversation
+                        conversationId = conversationQuery.docs.first.id;
+                      } else {
+                        // Create new conversation
+                        final conversationRef = await FirebaseFirestore.instance
+                            .collection('conversations')
+                            .add({
+                          'participants': [currentUser.uid, item.userId],
+                          'itemId': item.id,
+                          'lastMessage': '',
+                          'lastMessageAt': FieldValue.serverTimestamp(),
+                          'lastMessageSenderId': currentUser.uid,
+                          'lastMessageIsRead': false,
+                        });
+                        conversationId = conversationRef.id;
+                      }
+
+                      if (context.mounted) {
+                        // Navigate to chat screen
+                        context.go(
+                          '/chat/$conversationId',
+                          extra: {
+                            'currentUserId': currentUser.uid,
+                            'otherUserId': item.userId,
+                            'itemId': item.id,
+                            'otherUserName': otherUserName,
+                            'otherUserImageUrl':
+                                null, // You can store and fetch user profile images
+                          },
+                        );
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                                'Failed to start conversation. Please try again.'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    }
                   },
+                  tooltip: 'Message about this item',
                 ),
               ],
             ),
@@ -167,7 +265,12 @@ class HomeScreen extends StatelessWidget {
         // ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout),
+            icon: const Icon(Icons.message_outlined, color: Colors.white),
+            onPressed: () => context.go('/messages'),
+            tooltip: 'Messages',
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout, color: Colors.white),
             onPressed: () => _signOut(context),
             tooltip: 'Logout',
           ),
