@@ -7,6 +7,8 @@ Here is the link to the project board https://github.com/users/k-ndorbor/project
 
 Here is the link to the project screen designs https://www.figma.com/design/IaZ4JwmmSy3DdadmC32XHl/CAMPUS-LOST-AND-FOUND-SYSTEM?node-id=201-2&m=dev&t=fryMyIE7ib9EqMpc-1
 
+wireframe https://excalidraw.com/#json=hfYhAtqLR3OR_22n-DFWT,l4h_relWSFQ0QV05Y7yfZQ
+
 ## Target Users
 - **Students:** Primary users who frequently misplace personal items.
 - **Campus Security:** Verify and assist in item recovery.
